@@ -33,9 +33,7 @@ export default function LoginForm() {
 			setErrors(errorFields);
 			return;
     }
-    
-    console.log(values);
-    
+        
 
 		axios
 			.post('/public/login', values)

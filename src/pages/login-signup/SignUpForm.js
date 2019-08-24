@@ -26,6 +26,7 @@ export default function SignUpForm({ history, ...props }) {
 
 	const check = e => {
 		setIsChecked(e.target.checked);
+		setErrors({ ...errors, checkbox: '' });
 	};
 
 	const onSubmit = event => {
@@ -59,7 +60,6 @@ export default function SignUpForm({ history, ...props }) {
 
 					setIsChecked(false);
 				}
-				// history.push('/properties');
 			})
 			.catch(err => {
 				return err;
