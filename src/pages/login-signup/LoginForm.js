@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-import { signupValidator } from './signupValidator';
+import { loginValidator } from './loginValidator';
 import Button from '../../components/Button';
 import { Input, Label } from '../../components/Input';
 
 export default function LoginForm() {
 	const [errors, setErrors] = useState({});
-
-	const [isChecked, setIsChecked] = useState(false);
 
 	const [values, setValues] = useState({
 		email: '',
@@ -20,24 +18,44 @@ export default function LoginForm() {
 		setErrors({ ...errors, [name]: '' });
 	};
 
-	const check = e => {
-		setIsChecked(e.target.checked);
-	};
-
 	const onSubmit = event => {
 		event.preventDefault();
 
-		const errorFields = signupValidator(values, isChecked);
+		const errorFields = loginValidator(values);
 
 		if (Object.keys(errorFields).length > 0) {
 			setErrors(errorFields);
 			return;
-    }
-        
+		}
 
 		axios
 			.post('/public/login', values)
+			.then(res => {
+				if (res.data.statusCode !== 200) {
+					setErrors(res.data.errors);
+					alert(res.data.errors.error);
+				}
+				if (res.data.statusCode === 200 && res.data.token) {
+					const { payload, token } = res.data;
 
+					alert(`Welcome back ${payload.name}`);
+
+					setValues({
+						email: '',
+						password: '',
+					});
+
+					localStorage.setItem('access_token', token);
+					localStorage.setItem('user', payload);
+
+					console.log(payload);
+
+					setErrors({});
+				}
+			})
+			.catch(err => {
+				return err;
+			});
 	};
 
 	return (
@@ -72,14 +90,6 @@ export default function LoginForm() {
 							{errors.password}
 						</Label>
 					) : null}
-				</div>
-				<div className='col-12 mb-30'>
-					<ul>
-						<li>
-							<Input type='checkbox' id='login_remember' checked={isChecked} onChange={check} />
-							<Label htmlFor='login_remember'>Remember me</Label>
-						</li>
-					</ul>
 				</div>
 				<div className='col-12 mb-30'>
 					<Button testId='login-button' textContent='Login' submit={true} />
