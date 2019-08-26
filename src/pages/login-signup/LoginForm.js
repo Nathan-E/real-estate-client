@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 import { loginValidator } from './loginValidator';
 import Button from '../../components/Button';
@@ -15,6 +16,7 @@ export default function LoginForm() {
 
 	const onChange = ({ target: { name, value } }) => {
 		setValues({ ...values, [name]: value });
+		// remove the error display once a value is entered
 		setErrors({ ...errors, [name]: '' });
 	};
 
@@ -45,10 +47,10 @@ export default function LoginForm() {
 						password: '',
 					});
 
-					localStorage.setItem('access_token', token);
-					localStorage.setItem('user', payload);
+					localStorage.setItem('jwtToken', token);
 
-					console.log(payload);
+					const decodedToken = jwtDecode(localStorage.getItem('jwtToken'));
+					// console.log(decodedToken);
 
 					setErrors({});
 				}

@@ -21,6 +21,8 @@ export default function SignUpForm({ history, ...props }) {
 
 	const onChange = ({ target: { name, value } }) => {
 		setValues({ ...values, [name]: value });
+		
+		// remove the error display once a value is entered
 		setErrors({ ...errors, [name]: '' });
 	};
 
